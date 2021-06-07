@@ -12,23 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.boliche.dto.GameDTO;
 import br.com.boliche.entity.Game;
-import br.com.boliche.repository.GameRepository;
 import br.com.boliche.service.GameService;
 
 @RestController
-@RequestMapping("/game")
+@RequestMapping("/game/{alley}/score")
 public class GameResource {
 
 	private GameService gameService;
-	private GameRepository gameRepository;
 	
 	@Autowired
-	public GameResource(GameRepository gameRepository, GameService gameService) {
-		this.gameRepository = gameRepository;
+	public GameResource(GameService gameService) {
 		this.gameService = gameService;
 	}
 
-	@GetMapping("/{alley}/score")
+	@GetMapping
 	public GameDTO findAll(@PathVariable String alley) {
 		return this.gameService.findAllByAlley(alley);
 	}
