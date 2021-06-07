@@ -14,4 +14,6 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 	
 	List<Game> findAllByAlleyAndName(String alley, String name);
 	
+	void deleteAllByAlley(String alley);
+	
 }

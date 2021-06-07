@@ -39,25 +39,28 @@ public class GameService {
 		List<Game> game = this.gameRepository.findAllByAlley(alley);
 		Map<String, List<Game>> players = game.stream().collect(Collectors.groupingBy(Game::getName));
 		
-		GameDTO gameDTO = new GameDTO(alley);
+		if(!ObjectUtils.isEmpty(game)) {
+			GameDTO gameDTO = new GameDTO(alley);
+			
+			players.entrySet().stream().forEach(m -> {
+				PlayerDTO player = new PlayerDTO(m.getKey());
 				
-		players.entrySet().stream().forEach(m -> {
-			PlayerDTO player = new PlayerDTO(m.getKey());
-			
-			for(Game g: m.getValue()) {
-				if(player.getCurrentFrame().isStrike() || player.getCurrentFrame().isDone()) {
-					player.addFrame(new FrameDTO());
+				for(Game g: m.getValue()) {
+					if(player.getCurrentFrame().isStrike() || player.getCurrentFrame().isDone()) {
+						player.addFrame(new FrameDTO());
+					}
+					player.getCurrentFrame().addBall(g.getPins());
 				}
-				player.getCurrentFrame().addBall(g.getPins());
-			}
+				
+				gameDTO.addPlayer(player);
+				
+			});	
 			
-			gameDTO.addPlayer(player);
+			ScoreUtils.calculate(gameDTO.getPlayers());
 			
-		});	
-		
-		ScoreUtils.calculate(gameDTO.getPlayers());
-		
-		return gameDTO;
+			return gameDTO;
+		}
+		return null;		
 	}
 	
 }
